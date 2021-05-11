@@ -16,9 +16,12 @@ def getVersion(language):
     """Gets the recommended version for a specific language, returns None if the language is unknown."""
     return languages.get(language, {"version" : None})["version"]
 
-@polygon.on(pattern="piston (.*)")
+@polygon.on(pattern="piston")
 async def pistonfn(e):
-    arguments = e.pattern_match.group(1)
+    try:
+        arguments = e.text[7:] or reply.text
+    except (IndexError, AttributeError):
+        return await e.edit("`Invalid arguments provided.`")
     language, code = arguments.split(maxsplit=1)
     language = completeAlias(language)
     version = getVersion(language) or "1.0"
